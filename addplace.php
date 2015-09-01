@@ -159,20 +159,23 @@ $(document).ready(function() {
 </script>
 <?
 if(isset($place_name,$place_lat,$place_long,$place_type,$place_pic)){	
+	// บันทึกข้อมูล place_list //
 	$sql = "insert into place_list values(NULL,'$place_name','$place_lat','$place_long','$place_type')";
 	$result = mysql_query($sql); // mysql_query(คำสั่งภาษา SQL )ฟังห์ชั่นส่งคำสั่ง sql ไปที่ฐานข้อมูล
 	
-
+	// 	หลังจากบันทึกข้อฃมูล place_lis //
 	if($result)
 		{
 		$message = "บันทึกข้อมูลลง database เรียบร้อย";
 		echo "<script type='text/javascript'>alert('$message');</script>";
 		
-		$sql = "SELECT LAST_INSERT_ID(id_place)-1 as id_place from place_list order by id_place desc limit 1";
+		// หาค่า id_place ล่าสุดที่ บันทึกลง database 
+		$sql = "SELECT LAST_INSERT_ID(id_place) as id_place from place_list order by id_place desc limit 1";
 		$result = mysql_query($sql);
 		$row = mysql_fetch_array($result);
-		$last_id = $row["id_place"];
+		$last_id = $row["id_place"]; // ไอดีล่าสุด
 		
+		// บันทึก ข้อมูล รูปภาพของสถานที่ place_picture 
 		for($i = 0;$i < count($place_pic);$i++)
 		{
 		if($place_pic[$i] == NULL)
@@ -181,28 +184,27 @@ if(isset($place_name,$place_lat,$place_long,$place_type,$place_pic)){
 		}
 		else
 		{	
-				
 		$folder = $last_id.rand(); //สร้างโฟเดอร์ ที่มีการแรนดอมขึี้มา 
 		mkdir("document/place_pic/".$folder,0777); // every can read write exe. ,mkdir Make Dirctory
 		
 		//ประกาศตัวแปรเก็บค่าไฟล์ ที่ อัพโหลดมาโดยใช้ชื่อ ไฟล์ ตามที่ได้ upload มา
 		$place_pic[$i] = "document/place_pic/".$folder."/".$_FILES["place_pic"]["name"][$i];
 		
-		
 		//เก็บการ อัพโหลดไฟล์ แต่เปลี่ยนเป็นชื่อใหม่เพื่อไม่ให้มีไฟล์ช้ำกัน
 		move_uploaded_file($_FILES["place_pic"]["tmp_name"][$i],$place_pic[$i]);
 		
-		
 		$sql = "insert into place_picture values(NULL,'$last_id','$place_pic[$i]')";
 		$result = mysql_query($sql); // mysql_query(คำสั่งภาษา SQL )ฟังห์ชั่นส่งคำสั่ง sql ไปที่ฐานข้อมูล
-		$result;
-		
+		$result;		
 		}//else
-		
 		if($i == 10)
 		break;
+		
 		}//end for
 		
+		// ขั้นตอนบันทึก รายละเอียดประจำสถานที่ place_detail 
+		
+		// เขียนโค้ดที่นี้ //
 		
 		
 			
